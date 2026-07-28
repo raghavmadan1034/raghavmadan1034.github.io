@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Writing CSS That Scales &mdash; BlogSite</title>
+  <meta name="description" content="Design tokens and custom properties beat reaching for a framework." />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">BlogSite</a>
+      <nav class="site-nav">
+        <a href="../index.html">Home</a>
+        <a href="../about.html">About</a>
+        <button class="theme-toggle" type="button">Dark mode</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="../index.html">&larr; All posts</a>
+    <article class="post-article">
+      <h1>Writing CSS That Scales</h1>
+      <div class="post-meta">June 28, 2026 &middot; Raghav</div>
+
+      <p>
+        Most CSS problems are naming and consistency problems. A small token layer defined
+        with custom properties solves both without any tooling.
+      </p>
+
+      <h2>Define tokens once</h2>
+      <pre><code>:root {
+  --bg: #ffffff;
+  --text: #1f2328;
+  --accent: #0969da;
+  --radius: 10px;
+}</code></pre>
+
+      <p>
+        Every component then references the token instead of a literal value. Theming becomes
+        a matter of overriding the same names under a selector.
+      </p>
+
+      <pre><code>[data-theme="dark"] {
+  --bg: #0d1117;
+  --text: #e6edf3;
+}</code></pre>
+
+      <h2>Keep selectors flat</h2>
+      <p>
+        One class per component, modifiers as extra classes, and almost no nesting. Deep
+        descendant selectors are what makes stylesheets impossible to delete from later.
+      </p>
+
+      <blockquote>
+        If you cannot delete a rule confidently, the stylesheet is already too coupled.
+      </blockquote>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; <span id="year"></span> BlogSite. A sample static website.
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started with Static Sites &mdash; BlogSite</title>
+  <meta name="description" content="Why static sites are still the best default for a personal blog." />
+  <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="../index.html">BlogSite</a>
+      <nav class="site-nav">
+        <a href="../index.html">Home</a>
+        <a href="../about.html">About</a>
+        <button class="theme-toggle" type="button">Dark mode</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <a class="back-link" href="../index.html">&larr; All posts</a>
+    <article class="post-article">
+      <h1>Getting Started with Static Sites</h1>
+      <div class="post-meta">July 12, 2026 &middot; Raghav</div>
+
+      <p>
+        A static site is just files: HTML, CSS, JavaScript and images served exactly as they
+        are stored. There is no application server rendering pages per request, which removes
+        an entire class of failure modes.
+      </p>
+
+      <h2>Why it still works</h2>
+      <ul>
+        <li><strong>Speed.</strong> The server does no work beyond reading a file.</li>
+        <li><strong>Cost.</strong> Free tiers on GitHub Pages, Netlify or Azure Static Web Apps are generous.</li>
+        <li><strong>Safety.</strong> No database and no server runtime means a much smaller attack surface.</li>
+      </ul>
+
+      <blockquote>
+        Start with files. Add a build step only when repetition actually hurts.
+      </blockquote>
+
+      <h2>A minimal structure</h2>
+      <pre><code>index.html
+about.html
+posts/
+assets/css/style.css
+assets/js/main.js</code></pre>
+
+      <p>
+        When copy-pasting the header into every page starts to sting, move to a static site
+        generator. Until then, the plain approach keeps the whole project readable in an
+        afternoon.
+      </p>
+    </article>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; <span id="year"></span> BlogSite. A sample static website.
+    </div>
+  </footer>
+
+  <script src="../assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlogSite &mdash; Notes on building for the web</title>
+  <meta name="description" content="A sample static blog about web development, CSS and JavaScript." />
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="index.html">BlogSite</a>
+      <nav class="site-nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <button class="theme-toggle" type="button">Dark mode</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Notes on building for the web</h1>
+      <p>Short, practical posts about static sites, CSS and vanilla JavaScript.</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <input id="search" class="search-box" type="search" aria-label="Search posts" placeholder="Search posts by title, text or tag&hellip;" autocomplete="off" />
+
+    <ul id="post-list" class="post-list"></ul>
+    <p id="empty-state" class="empty-state" hidden>No posts matched your search.</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      &copy; <span id="year"></span> BlogSite. A sample static website.
+    </div>
+  </footer>
+
+  <script src="assets/js/posts.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
