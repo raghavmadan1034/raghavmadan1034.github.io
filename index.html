@@ -1,45 +1,209 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BlogSite &mdash; Notes on building for the web</title>
-  <meta name="description" content="A sample static blog about web development, CSS and JavaScript." />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Raghav Madan — CS & EE undergrad at IIT Kanpur, Software Engineer at Microsoft. Systems, algorithms, and software that ships.">
+  <title>Raghav Madan | Software Engineer</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
   <header class="site-header">
-    <div class="container">
-      <a class="brand" href="index.html">BlogSite</a>
-      <nav class="site-nav">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html" aria-label="Raghav Madan home">
+        <span class="brand-mark">RM</span>
+        <span>Raghav Madan</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Menu</span>
+        <span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="nav-links">
         <a href="index.html">Home</a>
-        <a href="about.html">About</a>
-        <button class="theme-toggle" type="button">Dark mode</button>
-      </nav>
-    </div>
+        <a href="projects.html">Projects</a>
+        <a href="blog.html">Blog</a>
+        <a href="assets/resume/Raghav_Madan_Resume.pdf">Resume</a>
+      </div>
+    </nav>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <h1>Notes on building for the web</h1>
-      <p>Short, practical posts about static sites, CSS and vanilla JavaScript.</p>
-    </div>
-  </section>
+  <main id="main">
 
-  <main class="container">
-    <input id="search" class="search-box" type="search" aria-label="Search posts" placeholder="Search posts by title, text or tag&hellip;" autocomplete="off" />
+    <!-- Hero -->
+    <section class="hero section">
+      <div class="hero-copy">
+        <p class="eyebrow">CS &amp; EE · IIT Kanpur · Software Engineer · Microsoft</p>
+        <h1>I build systems that sit at the edge of algorithms, infrastructure, and real-world software.</h1>
+        <p class="hero-text">
+          I'm Raghav Madan, a final-year CS &amp; EE undergraduate at IIT Kanpur with a 9.0 CPI. I've shipped
+          production software at Microsoft — automating WinUI2 to WinUI3 migrations at repository scale — and
+          I'm passionate about competitive programming, OS internals, cryptography, and software that actually ships.
+        </p>
+        <div class="hero-actions" aria-label="Primary actions">
+          <a class="button button-primary" href="projects.html">View projects</a>
+          <a class="button button-secondary" href="assets/resume/Raghav_Madan_Resume.pdf">Download resume</a>
+        </div>
+      </div>
 
-    <ul id="post-list" class="post-list"></ul>
-    <p id="empty-state" class="empty-state" hidden>No posts matched your search.</p>
+      <aside class="signal-panel" aria-label="Profile highlights">
+        <div class="panel-bar"><span></span><span></span><span></span></div>
+        <div class="signal-grid">
+          <div>
+            <span class="metric">9.0</span>
+            <span class="label">CPI at IIT Kanpur (B.Tech CS &amp; EE)</span>
+          </div>
+          <div>
+            <span class="metric metric-accent">1298</span>
+            <span class="label">All India Rank, JEE Advanced 2022</span>
+          </div>
+          <div>
+            <span class="metric">1639</span>
+            <span class="label">Codeforces max rating — Expert</span>
+          </div>
+          <div>
+            <span class="metric metric-accent">SWE</span>
+            <span class="label">Software Engineer at Microsoft (full-time)</span>
+          </div>
+        </div>
+        <div class="stack-line">
+          <span>C</span><span>C++</span><span>Verilog</span><span>Haskell</span>
+        </div>
+      </aside>
+    </section>
+
+    <!-- Experience -->
+    <section class="section" id="experience">
+      <div class="section-heading">
+        <p class="section-kicker">Experience</p>
+        <h2>Where I've worked</h2>
+      </div>
+      <div class="timeline">
+
+        <article class="timeline-item">
+          <div class="timeline-date">May 2025 – Jul 2025</div>
+          <div class="timeline-card">
+            <h3>Microsoft — Windows Team</h3>
+            <p class="role">Software Engineering Intern · Hyderabad</p>
+            <p>
+              Engineered a migration pipeline to automate WinUI2→WinUI3 migration, enabling over 80% of any
+              WinUI2 codebase to be ported in a single click using Microsoft's Bandish Framework. Built a
+              comprehensive knowledge base of scenario-based prompts — triggered by regex pattern matching —
+              to automatically refactor APIs, update namespaces, and modify config files. Successfully migrated
+              the WinUI2 Hardware Confirmator, reducing 500+ manual lines to one operation, verified on a VM.
+            </p>
+            <span class="ppo-badge">Returning as Software Engineer · 2026</span>
+          </div>
+        </article>
+
+        <article class="timeline-item">
+          <div class="timeline-date">Apr 2025 – May 2025</div>
+          <div class="timeline-card">
+            <h3>GoalBridge AI</h3>
+            <p class="role">Software Engineering Intern · Remote</p>
+            <p>
+              Migrated a Google Drive Closeout Wizard from Google Apps Script to Microsoft 365, re-implementing
+              the frontend as a client-side SPFx Web Part with Microsoft Graph API integration. Built an SPFx
+              ListView Command Set extension adding a 'Vectorize' folder option that triggers an automated
+              backend flow to download and prepare files for vectorisation.
+            </p>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Featured Projects -->
+    <section class="section" id="featured">
+      <div class="section-heading row-heading">
+        <div>
+          <p class="section-kicker">Featured projects</p>
+          <h2>Selected builds</h2>
+        </div>
+        <a class="text-link" href="projects.html">All projects →</a>
+      </div>
+      <div class="card-grid">
+        <article class="project-card">
+          <p class="tag">Systems / OS</p>
+          <h3>Building GemOS</h3>
+          <p>Custom kernel with memory allocator (mmap), mremap syscall, fault handling, round-robin scheduling,
+          multi-level page table walks, multithreading via clone/exit, and semaphore sync with spinlocks.</p>
+        </article>
+        <article class="project-card">
+          <p class="tag">Full Stack</p>
+          <h3>Travelly</h3>
+          <p>Trip management app with algorithmic debt simplification, UPI payment redirection, distance-minimising
+          route optimisation — Flutter frontend, Node.js + PostgreSQL + Firebase auth backend.</p>
+        </article>
+        <article class="project-card">
+          <p class="tag">Cryptography / Algorithms</p>
+          <h3>Primality Testing &amp; RSA</h3>
+          <p>Miller-Rabin in O(log³n), full RSA pipeline with Euler's totient + Extended Euclidean, deterministic
+          and probabilistic primality paths with fast modular exponentiation.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Achievements -->
+    <section class="section" id="achievements">
+      <div class="section-heading">
+        <p class="section-kicker">Achievements</p>
+        <h2>Recognition &amp; rankings</h2>
+      </div>
+      <div class="achievements-grid">
+        <div class="achievement-card">
+          <h3>Academic Excellence Award — IIT Kanpur</h3>
+          <p>Awarded for exceptional academic performance; A* grade in 20+ courses.</p>
+        </div>
+        <div class="achievement-card">
+          <h3>AIR 1298 — JEE Advanced 2022</h3>
+          <p>Top 0.5% among 0.25 million shortlisted candidates nationwide. AIR 1276 in JEE Mains among 1 million.</p>
+        </div>
+        <div class="achievement-card">
+          <h3>Expert on Codeforces · 4★ on CodeChef</h3>
+          <p>Max ratings: 1639 (CF) · 1910 (CC). Global Rank 711, Meta Hacker Cup 2025 Round 2. Global Rank 17, CodeChef Starters 114 Div 3.</p>
+        </div>
+        <div class="achievement-card">
+          <h3>AIR 23 — Srinivasa Ramanujan Mathematics Competition 2024</h3>
+          <p>Prelims conducted by IIT Madras. Score 325/390 in BITSAT 2022 (top 0.1% of 3 lakh applicants).</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="section contact-band" id="contact">
+      <div>
+        <p class="section-kicker">Contact</p>
+        <h2>Open to software engineering, systems, and quant research roles starting 2026.</h2>
+      </div>
+      <div class="contact-actions">
+        <a class="button button-primary" href="mailto:raghav.madan1034@gmail.com">Email me</a>
+        <a class="button button-secondary" href="https://www.linkedin.com/in/raghavmadan1034" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="button button-secondary" href="https://github.com/raghavmadan1034" target="_blank" rel="noopener">GitHub</a>
+        <a class="button button-secondary" href="https://codeforces.com/profile/raghavmadan1034" target="_blank" rel="noopener">Codeforces</a>
+      </div>
+    </section>
+
   </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      &copy; <span id="year"></span> BlogSite. A sample static website.
+  <footer class="footer">
+    <p>© <span id="year"></span> Raghav Madan</p>
+    <div>
+      <a href="mailto:raghav.madan1034@gmail.com">Email</a>
+      <a href="https://github.com/raghavmadan1034" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://codeforces.com/profile/raghavmadan1034" target="_blank" rel="noopener">Codeforces</a>
+      <a href="assets/resume/Raghav_Madan_Resume.pdf">Resume</a>
     </div>
   </footer>
 
-  <script src="assets/js/posts.js"></script>
-  <script src="assets/js/main.js"></script>
+  <script src="assets/main.js"></script>
 </body>
 </html>
+
+
+

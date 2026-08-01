@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Projects by Raghav Madan — OS kernels, cryptography, full-stack apps, hardware design, and ML research.">
+  <title>Projects | Raghav Madan</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="index.html">
+        <span class="brand-mark">RM</span>
+        <span>Raghav Madan</span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span class="sr-only">Menu</span><span></span><span></span><span></span>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="index.html">Home</a>
+        <a href="projects.html">Projects</a>
+        <a href="blog.html">Blog</a>
+        <a href="assets/resume/Raghav_Madan_Resume.pdf">Resume</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero section">
+      <p class="eyebrow">Projects</p>
+      <h1>Things I've built, from kernel internals to cryptosystems.</h1>
+      <p>
+        Course projects, research work, and side builds — spanning operating systems, cryptography,
+        full-stack applications, hardware design, and machine learning.
+      </p>
+    </section>
+
+    <section class="section project-list">
+
+      <article class="project-detail">
+        <div>
+          <p class="tag">Systems / OS · Aug 2025 – Nov 2025</p>
+          <h3>Building GemOS</h3>
+          <p class="role">CS330 — Operating Systems, IIT Kanpur</p>
+          <p>A kernel built from scratch: custom memory management, scheduling, fault handling, and multithreading.</p>
+        </div>
+        <ul>
+          <li>Built a custom memory allocator (malloc/free) using mmap() and implemented mremap() syscall for efficient memory remapping.</li>
+          <li>Implemented kernel fault handling for divide-by-zero faults with instruction skip, function skip, and user redirection.</li>
+          <li>Round-robin CPU scheduling with multi-level page table walks for mapping inspection.</li>
+          <li>Multithreading via clone/exit and semaphore-based synchronisation with spinlocks and wait queues.</li>
+        </ul>
+      </article>
+
+      <article class="project-detail">
+        <div>
+          <p class="tag">Full Stack · Jan 2026 – Apr 2026</p>
+          <h3>Travelly</h3>
+          <p class="role">CS253 — Software Development, IIT Kanpur</p>
+          <p>A trip management application for expense tracking, settlements, and group logistics.</p>
+        </div>
+        <ul>
+          <li>Algorithmic debt simplification for group expense settlements.</li>
+          <li>UPI-based payment redirection, media management, and distance-minimising route optimisation.</li>
+          <li>Flutter frontend, Node.js backend, PostgreSQL for persistent storage.</li>
+          <li>Firebase-authenticated API access with token verification caching and backend user synchronisation for invite-based group joining.</li>
+        </ul>
+      </article>
+
+      <article class="project-detail">
+        <div>
+          <p class="tag">Cryptography / Algorithms · Jan 2025 – Apr 2025</p>
+          <h3>Primality Testing &amp; RSA Cryptosystem</h3>
+          <p class="role">CS648 — Randomized Algorithms, IIT Kanpur</p>
+          <p>Re-invented Miller-Rabin and built a full RSA pipeline from first principles.</p>
+        </div>
+        <ul>
+          <li>Miller-Rabin primality test via Fermat's Theorem — O(log³n) time for primality validation.</li>
+          <li>Deterministic tests for small inputs (Trial Division, Sieve of Eratosthenes); probabilistic tests for large inputs.</li>
+          <li>Full RSA pipeline: random prime generation, key generation using Euler's totient + Extended Euclidean, encryption/decryption using fast modular exponentiation.</li>
+        </ul>
+      </article>
+
+      <article class="project-detail">
+        <div>
+          <p class="tag">Hardware / Cryptography · Apr 2025</p>
+          <h3>Hardware Implementation of Elliptic Curve Cryptography</h3>
+          <p class="role">CS220 — Computer Organisation, IIT Kanpur</p>
+          <p>Verilog HDL implementation of a Curve-25519 elliptic curve scalar multiplier.</p>
+        </div>
+        <ul>
+          <li>Designed hardware architecture for a Curve-25519 elliptic curve scalar multiplier in Verilog HDL.</li>
+          <li>Built a finite field multiplier leveraging modular reduction techniques applicable to Solinas primes.</li>
+          <li>FSM architecture for control flow over the scalar multiplication pipeline.</li>
+        </ul>
+      </article>
+
+      <article class="project-detail">
+        <div>
+          <p class="tag">Machine Learning / Research · May 2024 – Jun 2024</p>
+          <h3>PINN Application in Wave Simulation</h3>
+          <p class="role">SURGE Project, IIT Kanpur — under Dr. Subhajit Roy</p>
+          <p>Physics-Informed Neural Networks applied to the 1D heat equation.</p>
+        </div>
+        <ul>
+          <li>Applied PINNs on the 1D heat equation, modeling physics loss and data loss via mean squared error.</li>
+          <li>Designed a model to predict thermal diffusivity constant while using data loss for temperature distribution prediction.</li>
+          <li>Combined physics constraints with data-driven learning for sample-efficient simulation.</li>
+        </ul>
+      </article>
+
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© <span id="year"></span> Raghav Madan</p>
+    <div>
+      <a href="mailto:raghav.madan1034@gmail.com">Email</a>
+      <a href="https://github.com/raghavmadan1034" target="_blank" rel="noopener">GitHub</a>
+      <a href="assets/resume/Raghav_Madan_Resume.pdf">Resume</a>
+    </div>
+  </footer>
+
+  <script src="assets/main.js"></script>
+</body>
+</html>
+
+
+

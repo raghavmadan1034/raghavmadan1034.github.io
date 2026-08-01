@@ -1,46 +1,65 @@
-# BlogSite
+# raghavmadan.github.io
 
-A sample static blog website — plain HTML, CSS and JavaScript. No build step, no dependencies.
-
-## Run it
-
-Open `index.html` directly in a browser, or serve the folder:
-
-```powershell
-python -m http.server 8000
-# then browse to http://localhost:8000
-```
+Personal website of Raghav Madan — CS & EE undergrad at IIT Kanpur.
 
 ## Structure
 
 ```
-index.html            Post listing with live search
-about.html            About page
-posts/                Individual article pages
-assets/css/style.css  Design tokens, layout, light + dark theme
-assets/js/posts.js    Post metadata consumed by the listing
-assets/js/main.js     Rendering, search, theme toggle
+├── index.html          ← Home (hero, about, experience, projects, contact)
+├── projects.html       ← All projects
+├── blog.html           ← Blog listing
+├── blog/
+│   ├── template.html   ← Copy this for every new blog post
+│   └── *.html          ← Individual posts go here
+├── assets/
+│   ├── styles.css
+│   ├── main.js
+│   ├── favicon.svg
+│   └── resume/
+│       └── Raghav_Madan_Resume.pdf   ← Drop your PDF here
+└── .nojekyll
 ```
 
-## Features
+---
 
-- Responsive layout
-- Light/dark theme toggle persisted in `localStorage`, defaulting to the OS preference
-- Client-side search over post titles, excerpts and tags
-- Posts sorted newest first
+## Publishing a new blog post (4-step workflow)
 
-## Add a post
+### Step 1 — Write on Google Docs, then copy your content
+When your post is ready, select all (Ctrl+A) and copy.
 
-1. Copy a file in `posts/` and edit its content.
-2. Add a matching entry to the `POSTS` array in `assets/js/posts.js`:
+### Step 2 — Create the post file
+1. Duplicate `blog/template.html`, rename to a short slug e.g. `blog/winui3-migration.html`.
+2. Fill in the `<title>`, `<meta>`, eyebrow, h1, read time.
+3. Inside `<div class="article-body">` paste your content:
+   - Wrap paragraphs in `<p>...</p>`
+   - `<h2>` for section headings
+   - `<ul><li>` for bullets
+   - `<pre><code>` for code blocks
 
-```js
-{
-  title: "My New Post",
-  url: "posts/my-new-post.html",
-  date: "2026-08-01",
-  author: "Raghav",
-  excerpt: "One or two sentences shown on the home page.",
-  tags: ["tag-one", "tag-two"]
-}
+### Step 3 — Add the card to blog.html
+Open `blog.html` and paste above the placeholder cards:
+
+```html
+<article class="post-card">
+  <p class="tag">Engineering · August 2026</p>
+  <h2><a href="blog/winui3-migration.html">Your Post Title</a></h2>
+  <p>One or two sentence summary.</p>
+  <span class="post-meta">8 min read</span>
+</article>
 ```
+
+### Step 4 — Push to GitHub
+```bash
+git add .
+git commit -m "Add post: Your Post Title"
+git push
+```
+
+---
+
+## Setup
+
+1. Drop your PDF at `assets/resume/Raghav_Madan_Resume.pdf`.
+2. Push to a repo named `<yourusername>.github.io`.
+3. Settings → Pages → Source: `main` branch, `/ (root)`.
+4. Update GitHub/LinkedIn URLs in the HTML files (search `raghavmadan-iitk`).
