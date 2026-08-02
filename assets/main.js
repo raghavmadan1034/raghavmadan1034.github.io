@@ -49,23 +49,28 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   document.body.prepend(canvas);
   const ctx = canvas.getContext('2d');
 
-  /* ── Config ── */
-  const CFG = {
-    COLS:        28,          // grid columns (approx)
-    ROWS:        18,          // grid rows (approx)
-    PULL_RADIUS: 220,         // px — cursor influence radius
-    PULL_FORCE:  0.22,        // how strongly dots gravitate to cursor (0-1)
-    RELAX:       0.055,       // spring-back speed when cursor away
-    DAMPING:     0.78,        // velocity damping
-    LINE_DIST:   180,         // max distance between dots to draw a line
-    DOT_IDLE_R:  1.3,         // dot radius at rest
-    DOT_ACTIVE_R:2.8,         // dot radius when pulled
-    DRIFT_SPEED: 0.18,        // slow ambient drift speed
-    RIPPLE_FADE: 0.028,       // ripple alpha decay per frame
-    MAX_RIPPLES: 6,
-    CYAN:        '0,190,210',
-    CYAN_DIM:    '0,130,155',
-  };
+  /* ── Config — values scale with screen size on every resize ── */
+  let CFG = {};
+
+  function getConfig() {
+    const isMobile = W <= 600;
+    const isTablet = W <= 880;
+    return {
+      COLS:        isMobile ? 10 : isTablet ? 16 : 28,
+      ROWS:        isMobile ? 14 : isTablet ? 14 : 18,
+      PULL_RADIUS: isMobile ? 120 : 220,
+      PULL_FORCE:  0.22,
+      RELAX:       0.055,
+      DAMPING:     0.78,
+      LINE_DIST:   isMobile ? 100 : isTablet ? 130 : 180,
+      DOT_IDLE_R:  isMobile ? 1.0 : 1.3,
+      DOT_ACTIVE_R:isMobile ? 2.0 : 2.8,
+      DRIFT_SPEED: 0.18,
+      RIPPLE_FADE: 0.028,
+      MAX_RIPPLES: isMobile ? 3 : 6,
+      CYAN:        '0,190,210',
+    };
+  }
 
   let W, H, dots, animId;
   let mouse = { x: -9999, y: -9999, active: false };
@@ -100,10 +105,12 @@ document.querySelectorAll('.nav-links a').forEach(a => {
     }
   }
 
-  /* ── Resize ── */
+  /* ── Resize — rebuilds everything including config ── */
   function resize() {
     W = canvas.width  = window.innerWidth;
     H = canvas.height = window.innerHeight;
+    CFG = getConfig();   // recalculate density for new screen size
+    ripples = [];
     buildGrid();
   }
 
