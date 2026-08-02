@@ -489,39 +489,190 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
 }
 .footer a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-/* ── Responsive ───────────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE — tablet (≤880px) and mobile (≤600px / ≤400px)
+   Desktop and mobile are intentionally distinct layouts.
+═══════════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤880px) ──────────────────────────────────────────── */
 @media (max-width: 880px) {
+  /* Nav */
   .nav { min-height: 60px; }
   .nav-toggle { display: block; }
   .nav-links {
     position: absolute; top: 60px; left: 16px; right: 16px;
     display: none; flex-direction: column; align-items: stretch;
     border: 1px solid var(--line);
-    background: rgba(8, 12, 16, 0.97); backdrop-filter: blur(20px);
-    padding: 0.45rem; clip-path: var(--clip-sm);
+    background: rgba(8, 12, 16, 0.97);
+    backdrop-filter: blur(20px);
+    padding: 0.5rem; clip-path: var(--clip-sm);
+    z-index: 30;
   }
   .nav-links.is-open { display: flex; }
-  .nav-links a { padding: 0.7rem 1rem; }
+  .nav-links a {
+    padding: 0.85rem 1.1rem;
+    font-size: 0.88rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-links a:last-child { border-bottom: none; }
+
+  /* Layouts → single column */
   .hero, .split-section, .timeline-item,
   .project-detail, .contact-band { grid-template-columns: 1fr; }
-  .hero { min-height: auto; padding-top: 56px; gap: 40px; }
-  .card-grid, .blog-grid, .achievements-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Hero */
+  .hero {
+    min-height: auto;
+    padding-top: 52px;
+    padding-bottom: 52px;
+    gap: 44px;
+  }
+  .hero h1 { font-size: clamp(2.4rem, 6vw, 4rem); }
+
+  /* Signal panel */
+  .signal-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Cards — 2 columns on tablet */
+  .card-grid, .blog-grid { grid-template-columns: 1fr 1fr; }
+  .achievements-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Timeline */
+  .timeline-date { padding-top: 0; margin-bottom: 0.25rem; }
+  .timeline-item { gap: 0.75rem; }
+
+  /* Projects */
   .project-detail ul { grid-column: auto; }
-  .timeline-date { padding-top: 0; }
-  .contact-band { display: grid; }
-  .page-hero { width: min(var(--max), calc(100% - 32px)); margin: 0 auto; }
+
+  /* Contact */
+  .contact-band { display: grid; gap: 1.5rem; }
+
+  /* Page hero */
+  .page-hero { width: min(var(--max), calc(100% - 40px)); margin: 0 auto; }
+
+  /* Section */
+  .section { padding: 64px 0; }
 }
 
-@media (max-width: 580px) {
-  .section { width: min(var(--max), calc(100% - 24px)); padding: 56px 0; }
+/* ── Mobile (≤600px) ──────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* More breathing room on sides */
+  .section {
+    width: calc(100% - 32px);
+    padding: 48px 0;
+  }
+  .page-hero { width: calc(100% - 32px); }
+
+  /* Nav */
   .brand span:last-child { display: none; }
-  h1 { font-size: clamp(2.2rem, 12vw, 3.2rem); }
-  .card-grid, .blog-grid, .achievements-grid { grid-template-columns: 1fr; }
+
+  /* Typography — comfortable reading size */
+  h1 {
+    font-size: clamp(2rem, 10vw, 2.8rem);
+    line-height: 1.1;
+  }
+  h2 { font-size: clamp(1.55rem, 7vw, 2rem); }
+  h3 { font-size: 1rem; }
+  body { font-size: 15px; }
+
+  /* Hero */
+  .hero { gap: 36px; padding-top: 40px; padding-bottom: 48px; }
+  .hero-text { font-size: 1rem; margin-top: 1.1rem; }
+  .hero-actions { flex-direction: column; gap: 0.65rem; margin-top: 1.6rem; }
+  .button { width: 100%; justify-content: center; min-height: 50px; font-size: 0.82rem; }
+
+  /* Signal panel — 1 column, tighter */
+  .signal-grid { grid-template-columns: 1fr 1fr; }
+  .signal-grid div { min-height: 110px; padding: 1rem; }
+  .metric { font-size: 1.75rem; }
+  .label { font-size: 0.78rem; }
+  .stack-line { gap: 0.38rem; padding: 0.75rem; }
+  .stack-line span { font-size: 0.72rem; padding: 0.25rem 0.52rem; }
+
+  /* About split */
+  .split-section { gap: 1.6rem; }
+
+  /* Timeline */
+  .timeline { gap: 1rem; }
+  .timeline-card { padding: 1.1rem 1.1rem 1.1rem 1.3rem; }
+  .timeline-date {
+    font-size: 0.78rem;
+    padding: 0.6rem 1rem;
+    border-left: 2px solid var(--accent-border);
+    background: var(--surface);
+    clip-path: var(--clip-sm);
+  }
+
+  /* Cards — 1 column on mobile */
+  .card-grid, .blog-grid {
+    grid-template-columns: 1fr;
+    clip-path: none;
+    border: none;
+    gap: 0.75rem;
+    background: transparent;
+  }
+  .project-card, .post-card {
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent);
+    clip-path: var(--clip-sm);
+    min-height: auto;
+    padding: 1.2rem 1.2rem 1.2rem 1.4rem;
+  }
+
+  /* Achievements */
+  .achievements-grid {
+    grid-template-columns: 1fr;
+    clip-path: none;
+    border: none;
+    gap: 0.75rem;
+    background: transparent;
+  }
+  .achievement-card {
+    clip-path: var(--clip-sm);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent-border);
+  }
+
+  /* Projects page */
+  .project-list {
+    clip-path: none; border: none;
+    background: transparent; gap: 0.75rem;
+  }
+  .project-detail {
+    clip-path: var(--clip-sm);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--accent-border);
+    padding: 1.2rem;
+  }
+
+  /* Contact */
+  .contact-band { gap: 1.2rem; }
+  .contact-actions { flex-direction: column; gap: 0.6rem; }
+
+  /* Footer */
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1.5rem 0 2rem;
+  }
+  .footer div { flex-wrap: wrap; gap: 0.9rem; }
+
+  /* Row heading */
+  .row-heading { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+
+  /* Article */
+  .article h1 { font-size: clamp(1.8rem, 9vw, 2.6rem); }
+  .article-body p { font-size: 0.97rem; line-height: 1.78; }
+  .article-body h2 { font-size: 1.35rem; }
+}
+
+/* ── Very small phones (≤400px) ───────────────────────────────── */
+@media (max-width: 400px) {
+  .section { width: calc(100% - 24px); padding: 40px 0; }
+  h1 { font-size: clamp(1.85rem, 11vw, 2.4rem); }
   .signal-grid { grid-template-columns: 1fr; }
-  .signal-grid div { min-height: 120px; }
-  .row-heading, .footer { align-items: flex-start; flex-direction: column; gap: 0.6rem; }
-  .button { width: 100%; justify-content: center; }
-  h2 { font-size: clamp(1.5rem, 9vw, 2.2rem); }
+  .signal-grid div { min-height: 100px; }
+  .metric { font-size: 1.6rem; }
 }
 
 /* ── Blog post images ─────────────────────────────────────────── */
