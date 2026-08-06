@@ -55,19 +55,23 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   function getConfig() {
     const isMobile = W <= 600;
     const isTablet = W <= 880;
+    /* Scale grid density to actual screen size so monitors look as rich as laptops */
+    const spacing  = isMobile ? 62 : 50;
+    const COLS = isMobile ? 10 : Math.min(Math.round(W / spacing), 44);
+    const ROWS = isMobile ? 14 : Math.min(Math.round(H / spacing), 28);
     return {
-      COLS:        isMobile ? 10 : isTablet ? 16 : 28,
-      ROWS:        isMobile ? 14 : isTablet ? 14 : 18,
-      PULL_RADIUS: isMobile ? 120 : 220,
+      COLS,
+      ROWS,
+      PULL_RADIUS: isMobile ? 120 : 240,
       PULL_FORCE:  0.22,
       RELAX:       0.055,
       DAMPING:     0.78,
-      LINE_DIST:   isMobile ? 100 : isTablet ? 130 : 180,
-      DOT_IDLE_R:  isMobile ? 1.0 : 1.3,
-      DOT_ACTIVE_R:isMobile ? 2.0 : 2.8,
+      LINE_DIST:   isMobile ? 100 : Math.round(spacing * 2.8),
+      DOT_IDLE_R:  isMobile ? 1.0 : 1.5,
+      DOT_ACTIVE_R:isMobile ? 2.0 : 3.0,
       DRIFT_SPEED: 0.18,
       RIPPLE_FADE: 0.028,
-      MAX_RIPPLES: isMobile ? 3 : 6,
+      MAX_RIPPLES: isMobile ? 3 : 7,
       CYAN:        '0,190,210',
     };
   }
@@ -177,7 +181,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
           : 0;
 
         const proximity = (1 - d / CFG.LINE_DIST);
-        const alpha = proximity * (0.06 + Math.min(tension / 18, 0.28) + cursorBoost);
+        const alpha = proximity * (0.12 + Math.min(tension / 15, 0.30) + cursorBoost);
 
         /* Colour interpolates from dim (ambient) to vivid cyan (active) */
         const colourAlpha = 0.04 + cursorBoost * 0.35 + Math.min(tension / 18, 0.25);
