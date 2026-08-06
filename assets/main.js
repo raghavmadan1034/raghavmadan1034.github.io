@@ -116,12 +116,18 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   }
 
   /* ── Resize — rebuilds everything including config ──
-     Backing store is scaled by devicePixelRatio so hairlines render at the
-     same visual weight on DPR-1 monitors as on DPR-2 laptops/phones. */
+     The backing store is scaled so hairlines render at the same visual weight
+     on DPR-1 monitors as on DPR-2 laptops/phones. Cost scales with W*H*dpr^2,
+     so the scale is capped by a total pixel budget — on a 4K display an
+     uncapped DPR of 2 would mean redrawing 33M pixels every frame. */
   function resize() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth;
     H = window.innerHeight;
+
+    const PIXEL_BUDGET = 2.6e6;
+    const maxScale = Math.sqrt(PIXEL_BUDGET / (W * H));
+    const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, maxScale));
+
     canvas.width  = Math.round(W * dpr);
     canvas.height = Math.round(H * dpr);
     canvas.style.width  = W + 'px';
@@ -139,7 +145,20 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   }
 
   /* ── Main loop ── */
-  function draw() {
+  /* ── Main loop ──
+     The field is ambient, so it redraws at ~36fps instead of matching the
+     display's refresh rate. This canvas is fixed and covers the viewport, so
+     every redraw competes with scrolling for the main thread; halving the rate
+     roughly halves that contention with no visible change to the motion. */
+  const FRAME_MS = 1000 / 36;
+  let lastFrame = -Infinity;
+
+  function draw(now) {
+    animId = requestAnimationFrame(draw);
+    if (now === undefined) now = performance.now();
+    if (now - lastFrame < FRAME_MS) return;
+    lastFrame = now;
+
     ctx.clearRect(0, 0, W, H);
     frameCount++;
 
@@ -339,8 +358,6 @@ document.querySelectorAll('.nav-links a').forEach(a => {
       ctx.fillStyle = `rgba(${CFG.CYAN}, 0.9)`;
       ctx.fill();
     }
-
-    animId = requestAnimationFrame(draw);
   }
 
   /* ── Cursor tracking ── */

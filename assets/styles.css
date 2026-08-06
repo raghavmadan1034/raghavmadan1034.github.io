@@ -679,6 +679,7 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
 .article-body img {
   width: 100%;
   max-width: 100%;
+  height: auto;
   clip-path: var(--clip-sm);
   margin: 1.8rem 0;
   display: block;
