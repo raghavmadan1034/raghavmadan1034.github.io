@@ -55,10 +55,12 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   function getConfig() {
     const isMobile = W <= 600;
     const isTablet = W <= 880;
-    /* Scale grid density to actual screen size so monitors look as rich as laptops */
+    /* Scale grid density to actual screen size so monitors look as rich as
+       laptops. Caps are generous — draw calls are batched, so a 1440p screen
+       (~1560 dots) costs about the same as a laptop did before. */
     const spacing  = isMobile ? 62 : 50;
-    const COLS = isMobile ? 10 : Math.min(Math.round(W / spacing), 44);
-    const ROWS = isMobile ? 14 : Math.min(Math.round(H / spacing), 28);
+    const COLS = isMobile ? 10 : Math.min(Math.round(W / spacing), 72);
+    const ROWS = isMobile ? 14 : Math.min(Math.round(H / spacing), 44);
     return {
       COLS,
       ROWS,
@@ -81,6 +83,10 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   let prev  = { x: -9999, y: -9999 };
   let ripples = [];
   let frameCount = 0;
+
+  /* Alpha-quantisation buckets used to batch ambient line/dot draw calls */
+  const BUCKET_N   = 12;
+  const BUCKET_MAX = 0.60;
 
   /* ── Dot factory ── */
   function makeDot(ox, oy) {
@@ -109,10 +115,18 @@ document.querySelectorAll('.nav-links a').forEach(a => {
     }
   }
 
-  /* ── Resize — rebuilds everything including config ── */
+  /* ── Resize — rebuilds everything including config ──
+     Backing store is scaled by devicePixelRatio so hairlines render at the
+     same visual weight on DPR-1 monitors as on DPR-2 laptops/phones. */
   function resize() {
-    W = canvas.width  = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width  = Math.round(W * dpr);
+    canvas.height = Math.round(H * dpr);
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);  // must follow width/height assignment
     CFG = getConfig();   // recalculate density for new screen size
     ripples = [];
     buildGrid();
@@ -160,57 +174,131 @@ document.querySelectorAll('.nav-links a').forEach(a => {
       d.y  += d.vy;
     });
 
-    /* Draw connection lines */
+    /* Draw connection lines.
+       Dots are bucketed into a uniform grid of LINE_DIST-sized cells so each
+       dot only tests its 3x3 cell neighbourhood instead of every other dot.
+       Keeps large monitors (1000+ dots) at 60fps; the old O(n^2) scan did
+       ~850k pair tests per frame at 1440p and stalled the animation. */
+    const cell  = CFG.LINE_DIST;
+    const gcols = Math.ceil(W / cell) + 1;
+    const grows = Math.ceil(H / cell) + 1;
+    const buckets = new Array(gcols * grows);
+    const linePaths = new Array(BUCKET_N);
+
     for (let i = 0; i < dots.length; i++) {
-      for (let j = i + 1; j < dots.length; j++) {
-        const a = dots[i], b = dots[j];
-        const dx = a.x - b.x, dy = a.y - b.y;
-        const d  = Math.sqrt(dx * dx + dy * dy);
-        if (d > CFG.LINE_DIST) continue;
+      const d = dots[i];
+      let cx = Math.floor(d.x / cell);
+      let cy = Math.floor(d.y / cell);
+      if (cx < 0) cx = 0; else if (cx >= gcols) cx = gcols - 1;
+      if (cy < 0) cy = 0; else if (cy >= grows) cy = grows - 1;
+      const key = cy * gcols + cx;
+      if (buckets[key]) buckets[key].push(i);
+      else buckets[key] = [i];
+    }
 
-        /* Displacement from origin = "tension" — lights up lines */
-        const dispA = Math.hypot(a.x - a.ox, a.y - a.oy);
-        const dispB = Math.hypot(b.x - b.ox, b.y - b.oy);
-        const tension = Math.max(dispA, dispB);
+    for (let i = 0; i < dots.length; i++) {
+      const a = dots[i];
+      let cx = Math.floor(a.x / cell);
+      let cy = Math.floor(a.y / cell);
+      if (cx < 0) cx = 0; else if (cx >= gcols) cx = gcols - 1;
+      if (cy < 0) cy = 0; else if (cy >= grows) cy = grows - 1;
 
-        /* Proximity to cursor boosts line brightness */
-        const midX = (a.x + b.x) * 0.5, midY = (a.y + b.y) * 0.5;
-        const mDist = Math.hypot(mouse.x - midX, mouse.y - midY);
-        const cursorBoost = mouse.active
-          ? Math.max(0, 1 - mDist / (CFG.PULL_RADIUS * 1.3)) * 0.5
-          : 0;
+      for (let oy = -1; oy <= 1; oy++) {
+        const ny = cy + oy;
+        if (ny < 0 || ny >= grows) continue;
+        for (let ox = -1; ox <= 1; ox++) {
+          const nx = cx + ox;
+          if (nx < 0 || nx >= gcols) continue;
+          const bucket = buckets[ny * gcols + nx];
+          if (!bucket) continue;
 
-        const proximity = (1 - d / CFG.LINE_DIST);
-        const alpha = proximity * (0.22 + Math.min(tension / 12, 0.35) + cursorBoost);
+          for (let k = 0; k < bucket.length; k++) {
+            const j = bucket[k];
+            if (j <= i) continue;          // each pair handled once
+            const b = dots[j];
+            const dx = a.x - b.x, dy = a.y - b.y;
+            const d  = Math.sqrt(dx * dx + dy * dy);
+            if (d > cell) continue;
 
-        /* Colour interpolates from dim (ambient) to vivid cyan (active) */
-        const colourAlpha = 0.04 + cursorBoost * 0.35 + Math.min(tension / 18, 0.25);
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x, b.y);
-        ctx.strokeStyle = `rgba(${CFG.CYAN}, ${alpha})`;
-        ctx.lineWidth   = 0.5 + cursorBoost * 0.8;
-        ctx.stroke();
+            /* Displacement from origin = "tension" — lights up lines */
+            const dispA = Math.hypot(a.x - a.ox, a.y - a.oy);
+            const dispB = Math.hypot(b.x - b.ox, b.y - b.oy);
+            const tension = Math.max(dispA, dispB);
+
+            /* Proximity to cursor boosts line brightness */
+            const midX = (a.x + b.x) * 0.5, midY = (a.y + b.y) * 0.5;
+            const mDist = Math.hypot(mouse.x - midX, mouse.y - midY);
+            const cursorBoost = mouse.active
+              ? Math.max(0, 1 - mDist / (CFG.PULL_RADIUS * 1.3)) * 0.5
+              : 0;
+
+            const proximity = (1 - d / cell);
+            const alpha = proximity * (0.22 + Math.min(tension / 12, 0.35) + cursorBoost);
+
+            if (cursorBoost > 0.02) {
+              /* Cursor-lit lines keep their exact alpha and weight — few of them */
+              ctx.beginPath();
+              ctx.moveTo(a.x, a.y);
+              ctx.lineTo(b.x, b.y);
+              ctx.strokeStyle = `rgba(${CFG.CYAN}, ${alpha})`;
+              ctx.lineWidth   = 1 + cursorBoost * 0.8;
+              ctx.stroke();
+            } else {
+              /* Ambient lines are batched into a handful of alpha buckets so
+                 the whole field costs ~10 stroke calls instead of ~15,000 */
+              let bi = (alpha * BUCKET_N / BUCKET_MAX) | 0;
+              if (bi < 0) bi = 0; else if (bi >= BUCKET_N) bi = BUCKET_N - 1;
+              let p = linePaths[bi];
+              if (!p) p = linePaths[bi] = new Path2D();
+              p.moveTo(a.x, a.y);
+              p.lineTo(b.x, b.y);
+            }
+          }
+        }
       }
     }
 
-    /* Draw dots */
-    dots.forEach(d => {
-      const disp = Math.hypot(d.x - d.ox, d.y - d.oy);
+    ctx.lineWidth = 1;
+    for (let bi = 0; bi < BUCKET_N; bi++) {
+      const p = linePaths[bi];
+      if (!p) continue;
+      const a = (bi + 0.5) * (BUCKET_MAX / BUCKET_N);
+      ctx.strokeStyle = `rgba(${CFG.CYAN}, ${a})`;
+      ctx.stroke(p);
+    }
+
+    /* Draw dots — idle dots batched by brightness, cursor-lit dots drawn exactly */
+    const dotPaths = new Array(BUCKET_N);
+    for (let i = 0; i < dots.length; i++) {
+      const d = dots[i];
       const mDist = Math.hypot(mouse.x - d.x, mouse.y - d.y);
       const active = mouse.active && mDist < CFG.PULL_RADIUS;
-      const brightness = active
-        ? (1 - mDist / CFG.PULL_RADIUS) * 0.9 + 0.1
-        : Math.min(disp / 8, 0.5) + 0.22;
-      const r = active
-        ? CFG.DOT_IDLE_R + (CFG.DOT_ACTIVE_R - CFG.DOT_IDLE_R) * (1 - mDist / CFG.PULL_RADIUS)
-        : CFG.DOT_IDLE_R;
 
-      ctx.beginPath();
-      ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${CFG.CYAN}, ${brightness})`;
-      ctx.fill();
-    });
+      if (active) {
+        const brightness = (1 - mDist / CFG.PULL_RADIUS) * 0.9 + 0.1;
+        const r = CFG.DOT_IDLE_R +
+          (CFG.DOT_ACTIVE_R - CFG.DOT_IDLE_R) * (1 - mDist / CFG.PULL_RADIUS);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(${CFG.CYAN}, ${brightness})`;
+        ctx.fill();
+      } else {
+        const disp = Math.hypot(d.x - d.ox, d.y - d.oy);
+        const brightness = Math.min(disp / 8, 0.5) + 0.22;
+        let bi = (brightness * BUCKET_N / BUCKET_MAX) | 0;
+        if (bi < 0) bi = 0; else if (bi >= BUCKET_N) bi = BUCKET_N - 1;
+        let p = dotPaths[bi];
+        if (!p) p = dotPaths[bi] = new Path2D();
+        p.moveTo(d.x + CFG.DOT_IDLE_R, d.y);
+        p.arc(d.x, d.y, CFG.DOT_IDLE_R, 0, Math.PI * 2);
+      }
+    }
+    for (let bi = 0; bi < BUCKET_N; bi++) {
+      const p = dotPaths[bi];
+      if (!p) continue;
+      ctx.fillStyle = `rgba(${CFG.CYAN}, ${(bi + 0.5) * (BUCKET_MAX / BUCKET_N)})`;
+      ctx.fill(p);
+    }
 
     /* Draw ripples */
     ripples = ripples.filter(rp => rp.alpha > 0.005);
