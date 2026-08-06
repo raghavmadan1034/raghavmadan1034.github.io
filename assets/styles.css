@@ -700,6 +700,15 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
   margin-right: auto;
 }
 
+/* Scanned documents sit a little inside the text column so they read as
+   figures rather than full-bleed images, and stay centred like the portraits. */
+.article-body img.img-doc {
+  width: auto;
+  max-width: min(100%, 620px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Wide landscape shots break out of the text column to use the full
    container. Width is left at auto so nothing is upscaled past its natural
    size; margin-left plus the translate centres an element wider than its
