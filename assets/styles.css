@@ -690,3 +690,11 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
   letter-spacing: 0.04em;
   text-align: center;
 }
+
+/* Portrait shots would render ~930px tall at full article width */
+.article-body img.img-portrait {
+  width: auto;
+  max-width: min(100%, 440px);
+  margin-left: auto;
+  margin-right: auto;
+}
