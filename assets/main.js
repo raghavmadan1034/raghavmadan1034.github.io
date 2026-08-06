@@ -67,8 +67,8 @@ document.querySelectorAll('.nav-links a').forEach(a => {
       RELAX:       0.055,
       DAMPING:     0.78,
       LINE_DIST:   isMobile ? 100 : Math.round(spacing * 2.8),
-      DOT_IDLE_R:  isMobile ? 1.0 : 1.5,
-      DOT_ACTIVE_R:isMobile ? 2.0 : 3.0,
+      DOT_IDLE_R:  isMobile ? 1.0 : 1.8,
+      DOT_ACTIVE_R:isMobile ? 2.0 : 3.5,
       DRIFT_SPEED: 0.18,
       RIPPLE_FADE: 0.028,
       MAX_RIPPLES: isMobile ? 3 : 7,
@@ -181,7 +181,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
           : 0;
 
         const proximity = (1 - d / CFG.LINE_DIST);
-        const alpha = proximity * (0.12 + Math.min(tension / 15, 0.30) + cursorBoost);
+        const alpha = proximity * (0.22 + Math.min(tension / 12, 0.35) + cursorBoost);
 
         /* Colour interpolates from dim (ambient) to vivid cyan (active) */
         const colourAlpha = 0.04 + cursorBoost * 0.35 + Math.min(tension / 18, 0.25);
@@ -201,7 +201,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
       const active = mouse.active && mDist < CFG.PULL_RADIUS;
       const brightness = active
         ? (1 - mDist / CFG.PULL_RADIUS) * 0.9 + 0.1
-        : Math.min(disp / 10, 0.4) + 0.12;
+        : Math.min(disp / 8, 0.5) + 0.22;
       const r = active
         ? CFG.DOT_IDLE_R + (CFG.DOT_ACTIVE_R - CFG.DOT_IDLE_R) * (1 - mDist / CFG.PULL_RADIUS)
         : CFG.DOT_IDLE_R;
