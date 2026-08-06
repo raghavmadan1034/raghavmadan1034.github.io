@@ -55,25 +55,24 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   function getConfig() {
     const isMobile = W <= 600;
     const isTablet = W <= 880;
-    /* Scale grid density to actual screen size so monitors look as rich as
-       laptops. Caps are generous — draw calls are batched, so a 1440p screen
-       (~1560 dots) costs about the same as a laptop did before. */
-    const spacing  = isMobile ? 62 : 50;
-    const COLS = isMobile ? 10 : Math.min(Math.round(W / spacing), 72);
-    const ROWS = isMobile ? 14 : Math.min(Math.round(H / spacing), 44);
+    /* Grid density matches the build this replaced. Density is the dominant
+       per-frame cost: it drives both the dot count and, quadratically, the
+       number of connecting segments. Raising it to fill large monitors made
+       scrolling stutter, so the monitor fix is done with line weight and
+       opacity instead, which cost nothing per frame. */
     return {
-      COLS,
-      ROWS,
+      COLS:        isMobile ? 10 : isTablet ? 16 : 28,
+      ROWS:        isMobile ? 14 : isTablet ? 14 : 18,
       PULL_RADIUS: isMobile ? 120 : 240,
       PULL_FORCE:  0.22,
       RELAX:       0.055,
       DAMPING:     0.78,
-      LINE_DIST:   isMobile ? 100 : Math.round(spacing * 2.8),
-      DOT_IDLE_R:  isMobile ? 1.0 : 1.8,
-      DOT_ACTIVE_R:isMobile ? 2.0 : 3.5,
+      LINE_DIST:   isMobile ? 100 : isTablet ? 130 : 180,
+      DOT_IDLE_R:  isMobile ? 1.0 : 1.4,
+      DOT_ACTIVE_R:isMobile ? 2.0 : 2.9,
       DRIFT_SPEED: 0.18,
       RIPPLE_FADE: 0.028,
-      MAX_RIPPLES: isMobile ? 3 : 7,
+      MAX_RIPPLES: isMobile ? 3 : 6,
       CYAN:        '0,190,210',
     };
   }
@@ -116,23 +115,17 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   }
 
   /* ── Resize — rebuilds everything including config ──
-     The backing store is scaled so hairlines render at the same visual weight
-     on DPR-1 monitors as on DPR-2 laptops/phones. Cost scales with W*H*dpr^2,
-     so the scale is capped by a total pixel budget — on a 4K display an
-     uncapped DPR of 2 would mean redrawing 33M pixels every frame. */
+     The backing store matches CSS pixels, as the previous build did. Scaling
+     it by devicePixelRatio quadrupled the fill area on a DPR-2 display, and
+     since this canvas is fixed and covers the viewport, that cost lands on
+     the same main thread that scrolling needs. Hairlines are kept crisp with
+     a 1px line width instead, which does not grow the backing store. */
   function resize() {
-    W = window.innerWidth;
-    H = window.innerHeight;
-
-    const PIXEL_BUDGET = 2.6e6;
-    const maxScale = Math.sqrt(PIXEL_BUDGET / (W * H));
-    const dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 2, maxScale));
-
-    canvas.width  = Math.round(W * dpr);
-    canvas.height = Math.round(H * dpr);
-    canvas.style.width  = W + 'px';
-    canvas.style.height = H + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);  // must follow width/height assignment
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    canvas.style.width  = '';
+    canvas.style.height = '';
+    ctx.setTransform(1, 0, 0, 1, 0, 0);  // must follow width/height assignment
     CFG = getConfig();   // recalculate density for new screen size
     ripples = [];
     buildGrid();
