@@ -55,21 +55,33 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   function getConfig() {
     const isMobile = W <= 600;
     const isTablet = W <= 880;
-    /* Grid density matches the build this replaced. Density is the dominant
-       per-frame cost: it drives both the dot count and, quadratically, the
-       number of connecting segments. Raising it to fill large monitors made
-       scrolling stutter, so the monitor fix is done with line weight and
-       opacity instead, which cost nothing per frame. */
+
+    /* An external monitor is typically DPR 1 and wide; laptop panels are
+       HiDPI. The backing store is in CSS pixels, so on a DPR-1 screen a 0.5px
+       line antialiases to roughly half strength, while the same line is
+       upscaled to a full device pixel on a HiDPI panel. That is why the field
+       looked washed out on the monitor and correct on the laptop. The grid
+       count is also fixed, so on a wide screen the dots spread apart and fewer
+       of them fall within LINE_DIST of each other.
+       Both are compensated for here and only here, so laptops and phones keep
+       exactly the look of the previous build. */
+    const dpr = window.devicePixelRatio || 1;
+    const isMonitor = !isMobile && !isTablet && dpr < 1.5 && W >= 1500;
+
     return {
-      COLS:        isMobile ? 10 : isTablet ? 16 : 28,
-      ROWS:        isMobile ? 14 : isTablet ? 14 : 18,
-      PULL_RADIUS: isMobile ? 120 : 240,
+      COLS:        isMobile ? 10 : isTablet ? 16 : isMonitor ? Math.min(Math.round(W / 58), 36) : 28,
+      ROWS:        isMobile ? 14 : isTablet ? 14 : isMonitor ? Math.min(Math.round(H / 58), 24) : 18,
+      PULL_RADIUS: isMobile ? 120 : 220,
       PULL_FORCE:  0.22,
       RELAX:       0.055,
       DAMPING:     0.78,
       LINE_DIST:   isMobile ? 100 : isTablet ? 130 : 180,
-      DOT_IDLE_R:  isMobile ? 1.0 : 1.4,
-      DOT_ACTIVE_R:isMobile ? 2.0 : 2.9,
+      DOT_IDLE_R:  isMobile ? 1.0 : 1.3,
+      DOT_ACTIVE_R:isMobile ? 2.0 : 2.8,
+      /* Visual weight — raised only on a DPR-1 monitor to offset the
+         antialiasing loss described above. */
+      HAIRLINE:    isMonitor ? 0.9  : 0.5,
+      ALPHA_BASE:  isMonitor ? 0.10 : 0.06,
       DRIFT_SPEED: 0.18,
       RIPPLE_FADE: 0.028,
       MAX_RIPPLES: isMobile ? 3 : 6,
@@ -84,8 +96,8 @@ document.querySelectorAll('.nav-links a').forEach(a => {
   let frameCount = 0;
 
   /* Alpha-quantisation buckets used to batch ambient line/dot draw calls */
-  const BUCKET_N   = 12;
-  const BUCKET_MAX = 0.60;
+  const BUCKET_N   = 20;
+  const BUCKET_MAX = 0.50;
 
   /* ── Dot factory ── */
   function makeDot(ox, oy) {
@@ -245,7 +257,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
               : 0;
 
             const proximity = (1 - d / cell);
-            const alpha = proximity * (0.22 + Math.min(tension / 12, 0.35) + cursorBoost);
+            const alpha = proximity * (CFG.ALPHA_BASE + Math.min(tension / 18, 0.28) + cursorBoost);
 
             if (cursorBoost > 0.02) {
               /* Cursor-lit lines keep their exact alpha and weight — few of them */
@@ -253,7 +265,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
               ctx.moveTo(a.x, a.y);
               ctx.lineTo(b.x, b.y);
               ctx.strokeStyle = `rgba(${CFG.CYAN}, ${alpha})`;
-              ctx.lineWidth   = 1 + cursorBoost * 0.8;
+              ctx.lineWidth   = CFG.HAIRLINE + cursorBoost * 0.8;
               ctx.stroke();
             } else {
               /* Ambient lines are batched into a handful of alpha buckets so
@@ -270,7 +282,7 @@ document.querySelectorAll('.nav-links a').forEach(a => {
       }
     }
 
-    ctx.lineWidth = 1;
+    ctx.lineWidth = CFG.HAIRLINE;
     for (let bi = 0; bi < BUCKET_N; bi++) {
       const p = linePaths[bi];
       if (!p) continue;
