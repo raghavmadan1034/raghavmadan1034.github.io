@@ -717,14 +717,3 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
   margin-left: auto;
   margin-right: auto;
 }
-
-/* Wide landscape shots break out of the text column to use the full
-   container. Width is left at auto so nothing is upscaled past its natural
-   size; margin-left plus the translate centres an element wider than its
-   parent, which margin:auto cannot do. */
-.article-body img.img-wide {
-  width: auto;
-  max-width: min(var(--max), calc(100vw - 32px));
-  margin-left: 50%;
-  transform: translateX(-50%);
-}
