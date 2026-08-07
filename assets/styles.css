@@ -700,6 +700,15 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
   margin-right: auto;
 }
 
+/* Low-resolution meme/GIF stills: cap the display width so they are not
+   upscaled into mush. */
+.article-body img.img-small {
+  width: auto;
+  max-width: min(100%, 380px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Scanned documents sit a little inside the text column so they read as
    figures rather than full-bleed images, and stay centred like the portraits. */
 .article-body img.img-doc {
