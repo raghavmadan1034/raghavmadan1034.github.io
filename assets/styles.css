@@ -460,6 +460,15 @@ h3 { font-size: 1.1rem; letter-spacing: 0.02em; }
 .article-body ul, .article-body ol { color: var(--muted); padding-left: 1.4rem; margin: 0 0 1.3rem; }
 .article-body li { margin-bottom: 0.55rem; font-size: 1rem; line-height: 1.74; }
 .article-body li::marker { color: var(--accent); }
+.article-body a {
+  color: var(--accent);
+  border-bottom-color: rgba(0, 170, 204, 0.45);
+}
+.article-body a:hover {
+  color: var(--accent);
+  border-bottom-style: solid;
+  border-bottom-color: var(--accent);
+}
 .article-body pre {
   border: 1px solid var(--line); background: var(--surface-2);
   clip-path: var(--clip-sm); overflow-x: auto;
